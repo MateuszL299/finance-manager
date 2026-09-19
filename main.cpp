@@ -26,7 +26,18 @@ int main() {
     std::vector<std::string> opisy = {};
 
     do {
-        std::cin >> choose;
+        while(true){    
+            std::cin >> choose;
+            if(std::cin.fail() || choose < 0 || choose > 4) {
+                std::cin.clear();
+
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << '\n' << "Podaj poprawną liczbę: ";
+            } else {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                break;
+            }
+        }
 
         switch(choose) {
             case 1: {
@@ -40,7 +51,12 @@ int main() {
 
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cout << '\n' << "Podaj poprawną liczbę: ";
-                    } else {
+                    }
+                    else if(przychod <= 0){
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Przychód musi być większy od 0. Spróbuj ponownie: ";
+                    } 
+                    else {
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         break;
                     }
@@ -50,7 +66,6 @@ int main() {
                 transakcje.push_back(przychod);
                 std::cout << '\n' << "Dodaj opis transkacji: ";
                 std::string nowa; //transakcja
-                std::cin.ignore();
                 std::getline(std::cin, nowa);
                 opisy.push_back(nowa);
                 
@@ -67,19 +82,23 @@ int main() {
 
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cout << '\n' << "Podaj poprawną liczbę: ";
-                    } else {
+                    } 
+                    else if(wydatek <= 0) {
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Wydatek musi być większy od 0. Spróbuj ponownie: ";
+                    } 
+                    else {
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         break;
                     }
                 }
                 saldo -= wydatek;
                 wydatki += wydatek;
-                wydatek = wydatek * (-1);
+                wydatek = -wydatek;
                 transakcje.push_back(wydatek);
 
                 std::cout << '\n' << "Dodaj opis transkacji: ";
                 std::string nowa; //transakcja
-                std::cin.ignore();
                 std::getline(std::cin, nowa);
                 opisy.push_back(nowa);
 
@@ -94,12 +113,17 @@ int main() {
             case 4: {
                 std::cout << '\n' << "Twoje transakcje są nastepujące: " << std::endl;
 
-                for(int i = 0; i < transakcje.size(); ++i) {
-                    if(transakcje.empty()) {
-                        std::cout << '\n' << "Nie masz żadnych transakcji";
+                if(transakcje.empty()) {
+                    std::cout << '\n' << "Nie masz żadnych transakcji" << std::endl;
+                } else {
+                    for(size_t i = 0; i < transakcje.size(); ++i) {
+                        std::cout << transakcje[i] << "-" << opisy[i] << std::endl;
                     }
-                    else std::cout << transakcje[i] << "-" << opisy[i] << std::endl;
                 }
+                break;
+            }
+            default: {
+                break;
             }
 
         }

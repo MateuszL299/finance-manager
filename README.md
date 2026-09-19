@@ -10,6 +10,7 @@ A simple personal finance manager written in C++.
 - Display total income and expenses
 - Display transaction history
 - Basic input validation
+- Menu input validation
 
 ## Technologies
 
@@ -17,6 +18,12 @@ A simple personal finance manager written in C++.
 - STL (`vector`, `string`)
 - Git / GitHub
 
+## Version
+
+**v0.1.1**
+
+Basic finance management functionality with input validation implemented.
+
 ## Status
 
-🚧 Version 0.1 — basic functionality implemented.
+🚧 Project in development.
