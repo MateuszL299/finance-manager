@@ -5,6 +5,39 @@
 #include <windows.h>
 #include <limits>
 
+struct Transaction {
+    long double price;
+    std::string name;
+};
+
+void addTransaction(std::vector<Transaction>& transactions) {
+
+    Transaction fresh; //nowa transkacja
+
+    while(true){
+        std::cin >> fresh.price;
+        if(std::cin.fail()) {
+            std::cin.clear();
+
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << '\n' << "Podaj poprawną liczbę: ";
+            }
+            else if(fresh.price <= 0){
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Kwota musi być większa od 0. Spróbuj ponownie: ";
+            } 
+            else {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                break;
+            }
+    }
+
+    std::cout << "Dodaj opis transakcji: " << std::endl;
+    std::getline(std::cin, fresh.name);
+
+    transactions.push_back(fresh);
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
@@ -18,12 +51,12 @@ int main() {
               << "4. Pokaż transkacje" << std::endl
               << "0. Wyjdź" << std::endl;
 
+    std::vector<Transaction> transactions; //wektor przechowujuacy transkacje
+
     int choose;
     long double saldo = 0;
     long double przychody = 0;
     long double wydatki = 0;
-    std::vector<long double> transakcje = {};
-    std::vector<std::string> opisy = {};
 
     do {
         while(true){    
@@ -43,64 +76,20 @@ int main() {
             case 1: {
                 std::cout << "Podaj kwote przychodu: " << std::endl;
 
-                long double przychod;
-                while(true){
-                    std::cin >> przychod;
-                    if(std::cin.fail()) {
-                        std::cin.clear();
+                addTransaction(transactions);
 
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        std::cout << '\n' << "Podaj poprawną liczbę: ";
-                    }
-                    else if(przychod <= 0){
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        std::cout << "Przychód musi być większy od 0. Spróbuj ponownie: ";
-                    } 
-                    else {
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        break;
-                    }
-                }
-                saldo += przychod;
-                przychody += przychod;
-                transakcje.push_back(przychod);
-                std::cout << '\n' << "Dodaj opis transkacji: ";
-                std::string nowa; //transakcja
-                std::getline(std::cin, nowa);
-                opisy.push_back(nowa);
-                
-
+                saldo += transactions.back().price;
+                przychody += transactions.back().price;
+        
                 break;
             }
             case 2: {
                 std::cout << '\n' << "Podaj kwotę wydatku: " << std::endl;
-                long double wydatek;
-                while(true){
-                    std::cin >> wydatek;
-                    if(std::cin.fail()) {
-                        std::cin.clear();
+                
+                addTransaction(transactions);
 
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        std::cout << '\n' << "Podaj poprawną liczbę: ";
-                    } 
-                    else if(wydatek <= 0) {
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        std::cout << "Wydatek musi być większy od 0. Spróbuj ponownie: ";
-                    } 
-                    else {
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        break;
-                    }
-                }
-                saldo -= wydatek;
-                wydatki += wydatek;
-                wydatek = -wydatek;
-                transakcje.push_back(wydatek);
-
-                std::cout << '\n' << "Dodaj opis transkacji: ";
-                std::string nowa; //transakcja
-                std::getline(std::cin, nowa);
-                opisy.push_back(nowa);
+                saldo -= transactions.back().price;
+                wydatki += transactions.back().price;
 
                 break;
             }
@@ -113,19 +102,19 @@ int main() {
             case 4: {
                 std::cout << '\n' << "Twoje transakcje są nastepujące: " << std::endl;
 
-                if(transakcje.empty()) {
+                if(transactions.empty()) {
                     std::cout << '\n' << "Nie masz żadnych transakcji" << std::endl;
                 } else {
-                    for(size_t i = 0; i < transakcje.size(); ++i) {
-                        std::cout << transakcje[i] << "-" << opisy[i] << std::endl;
+                    for(size_t i = 0; i < transactions.size(); ++i) {
+                        std::cout << transactions[i].price << " - " << transactions[i].name << std::endl;
                     }
                 }
                 break;
             }
+
             default: {
                 break;
             }
-
         }
 
         std::cout << '\n' << "Choose an option: " << std::endl
