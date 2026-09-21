@@ -23,9 +23,9 @@ A simple personal finance manager written in C++.
 
 ## Version
 
-**v0.1.2**
+**v0.1.3**
 
-The project has been refactored to use a `Transaction` structure and a dedicated function for adding transactions.
+The project has been refactored to use a Menu funtcion.
 
 ## Status
 

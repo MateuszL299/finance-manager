@@ -5,6 +5,15 @@
 #include <windows.h>
 #include <limits>
 
+void showMenu() {
+    std::cout << "Choose an option: " << std::endl
+              << "1. Dodaj przychód" << std::endl
+              << "2. Dodaj wydatek" << std::endl
+              << "3. Pokaż saldo" << std::endl
+              << "4. Pokaż transkacje" << std::endl
+              << "0. Wyjdź" << std::endl;
+}
+
 struct Transaction {
     long double price;
     std::string name;
@@ -44,12 +53,7 @@ int main() {
     std::setlocale(LC_ALL, "polish");
 
     std::cout << "===== FINANCE MANAGER =====" << std::endl;
-    std::cout << "Choose an option: " << std::endl
-              << "1. Dodaj przychód" << std::endl
-              << "2. Dodaj wydatek" << std::endl
-              << "3. Pokaż saldo" << std::endl
-              << "4. Pokaż transkacje" << std::endl
-              << "0. Wyjdź" << std::endl;
+    showMenu();
 
     std::vector<Transaction> transactions; //wektor przechowujuacy transkacje
 
@@ -117,12 +121,7 @@ int main() {
             }
         }
 
-        std::cout << '\n' << "Choose an option: " << std::endl
-              << "1. Dodaj przychód" << std::endl
-              << "2. Dodaj wydatek" << std::endl
-              << "3. Pokaż saldo" << std::endl
-              << "4. Pokaż transkacje" << std::endl
-              << "0. Wyjdź" << std::endl;
+        showMenu();
 
     } while(choose != 0);
 
