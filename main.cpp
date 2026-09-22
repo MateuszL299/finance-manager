@@ -1,17 +1,15 @@
 #include <iostream>
-#include <locale>
 #include <vector>
 #include <string>
-#include <windows.h>
 #include <limits>
 
 void showMenu() {
     std::cout << "Choose an option: " << std::endl
-              << "1. Dodaj przychód" << std::endl
+              << "1. Dodaj przychod" << std::endl
               << "2. Dodaj wydatek" << std::endl
-              << "3. Pokaż saldo" << std::endl
-              << "4. Pokaż transkacje" << std::endl
-              << "0. Wyjdź" << std::endl;
+              << "3. Pokaz saldo" << std::endl
+              << "4. Pokaz transkacje" << std::endl
+              << "0. Wyjdz" << std::endl;
 }
 
 struct Transaction {
@@ -29,11 +27,11 @@ void addTransaction(std::vector<Transaction>& transactions) {
             std::cin.clear();
 
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << '\n' << "Podaj poprawną liczbę: ";
+            std::cout << '\n' << "Podaj poprawna liczbe: ";
             }
             else if(fresh.price <= 0){
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Kwota musi być większa od 0. Spróbuj ponownie: ";
+                std::cout << "Kwota musi być wieksza od 0. Sprobuj ponownie: ";
             } 
             else {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -48,9 +46,6 @@ void addTransaction(std::vector<Transaction>& transactions) {
 }
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-    std::setlocale(LC_ALL, "polish");
 
     std::cout << "===== FINANCE MANAGER =====" << std::endl;
     showMenu();
@@ -69,7 +64,7 @@ int main() {
                 std::cin.clear();
 
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << '\n' << "Podaj poprawną liczbę: ";
+                std::cout << '\n' << "Podaj poprawna liczbe: ";
             } else {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 break;
@@ -88,7 +83,7 @@ int main() {
                 break;
             }
             case 2: {
-                std::cout << '\n' << "Podaj kwotę wydatku: " << std::endl;
+                std::cout << '\n' << "Podaj kwota wydatku: " << std::endl;
                 
                 addTransaction(transactions);
 
@@ -98,16 +93,16 @@ int main() {
                 break;
             }
             case 3: {
-                std::cout << '\n' << "Twoje saldo wynosi: " << saldo << " złoty" << std::endl;
-                std::cout << '\n' << "Twoje przychody wynoszą: " << przychody << " złoty" << std::endl;
-                std::cout << '\n' << "Twoje wydatki wynoszą: " << wydatki << " złoty" << std::endl;
+                std::cout << '\n' << "Twoje saldo wynosi: " << saldo << " zloty" << std::endl;
+                std::cout << '\n' << "Twoje przychody wynosza: " << przychody << " zloty" << std::endl;
+                std::cout << '\n' << "Twoje wydatki wynosza: " << wydatki << " zloty" << std::endl;
                 break;
             }
             case 4: {
-                std::cout << '\n' << "Twoje transakcje są nastepujące: " << std::endl;
+                std::cout << '\n' << "Twoje transakcje sa nastepujace: " << std::endl;
 
                 if(transactions.empty()) {
-                    std::cout << '\n' << "Nie masz żadnych transakcji" << std::endl;
+                    std::cout << '\n' << "Nie masz zadnych transakcji" << std::endl;
                 } else {
                     for(size_t i = 0; i < transactions.size(); ++i) {
                         std::cout << transactions[i].price << " - " << transactions[i].name << std::endl;
