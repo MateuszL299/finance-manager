@@ -23,9 +23,9 @@ A simple personal finance manager written in C++.
 
 ## Version
 
-**v0.1.4**
+**v0.1.5**
 
-The project has been refactored to use, removed Polish symbols.
+Added to the project new function - category.
 
 ## Status
 
