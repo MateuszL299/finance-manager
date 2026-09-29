@@ -12,11 +12,63 @@ void showMenu() {
               << "0. Wyjdz" << std::endl;
 }
 
+enum class Category {
+    food,
+    fees,
+    entertainment,
+    other
+};
+
 struct Transaction {
     long double price;
     std::string name;
-    std::string category;
+    Category cat;
 };
+
+void addCategory(Transaction& trans) {
+
+    std::cout << "Dodaj kategorie: " << std::endl;
+    std::cout << "1. Jedzenie" << std::endl
+              << "2. Oplaty" << std::endl
+              << "3. Rozrywka" << std::endl
+              << "4. Inne" << std::endl;
+
+    int categoryChoice;
+
+    while(true){
+        std::cin >> categoryChoice;
+        if(std::cin.fail() || categoryChoice < 1 || categoryChoice > 4) {
+            std::cin.clear();
+
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << '\n' << "Podaj poprawny numer: ";
+            } 
+            else {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                break;
+            }
+    }
+
+
+    switch(categoryChoice) {
+        case 1: {
+            trans.cat = Category::food;
+            break;
+        }
+        case 2: {
+            trans.cat = Category::fees;
+            break;
+        }
+        case 3: {
+            trans.cat = Category::entertainment;
+            break;
+        }
+        case 4: {
+            trans.cat = Category::other;
+            break;
+        }
+    }
+}
 
 void addTransaction(std::vector<Transaction>& transactions) {
 
@@ -43,49 +95,28 @@ void addTransaction(std::vector<Transaction>& transactions) {
     std::cout << "Dodaj opis transakcji: " << std::endl;
     std::getline(std::cin, fresh.name);
 
-    std::cout << "Dodaj kategorie: " << std::endl;
-    std::cout << "1. Jedzenie" << std::endl
-              << "2. Oplaty" << std::endl
-              << "3. Rozrywka" << std::endl
-              << "4. Inne" << std::endl;
-    int cat;
-    while(true){
-        std::cin >> cat;
-        if(std::cin.fail() || cat < 1 || cat > 4) {
-            std::cin.clear();
 
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << '\n' << "Podaj poprawny numer: ";
-            } 
-            else {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                break;
-            }
-    }
-
-
-    switch(cat) {
-        case 1: {
-            fresh.category = "jedzenie";
-            break;
-        }
-        case 2: {
-            fresh.category = "oplaty";
-            break;
-        }
-        case 3: {
-            fresh.category = "rozrywka";
-            break;
-        }
-        case 4: {
-            fresh.category = "inne";
-            break;
-        }
-    }
-    
-
+    addCategory(fresh);
 
     transactions.push_back(fresh);
+}
+
+std::string categoryToString(Category category) {
+    switch(category) {
+        case Category::food:
+            return "Jedzenie";
+        
+        case Category::fees:
+            return "Oplaty";
+        
+        case Category::entertainment:
+            return "Rozrywka";
+        
+        case Category::other:
+            return "Inne";
+    }
+
+    return "Nieznana";
 }
 
 int main() {
@@ -148,7 +179,12 @@ int main() {
                     std::cout << '\n' << "Nie masz zadnych transakcji" << std::endl;
                 } else {
                     for(size_t i = 0; i < transactions.size(); ++i) {
-                        std::cout << transactions[i].price << " - " << transactions[i].name << " - " <<transactions[i].category << std::endl;
+                        std::cout << transactions[i].price 
+                        << " - " 
+                        << transactions[i].name 
+                        << " - " 
+                        << categoryToString(transactions[i].cat)
+                        << std::endl;
                     }
                 }
                 break;

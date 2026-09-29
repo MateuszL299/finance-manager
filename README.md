@@ -23,9 +23,9 @@ A simple personal finance manager written in C++.
 
 ## Version
 
-**v0.1.5**
+**v0.1.6**
 
-Added to the project new function - category.
+Added category as a function and replace to string to enum class.
 
 ## Status
 
