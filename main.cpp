@@ -2,15 +2,28 @@
 #include <vector>
 #include <string>
 #include <limits>
+#include <functional>
 
-void showMenu() {
-    std::cout << "Choose an option: " << std::endl
-              << "1. Dodaj przychod" << std::endl
-              << "2. Dodaj wydatek" << std::endl
-              << "3. Pokaz saldo" << std::endl
-              << "4. Pokaz transkacje" << std::endl
-              << "0. Wyjdz" << std::endl;
+template<typename T>
+T readValidation(const std::string& errorMsg, std::function<bool(const T&)> isValid) {
+    T value;
+    while(true) { 
+        std::cin >> value;
+        if(std::cin.fail() || !isValid(value)) {                                //walidacja danych
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << '\n' << errorMsg;
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return value;
+        }
+    }
 }
+
+enum class Type {
+    Income,
+    Expense
+};
 
 enum class Category {
     food,
@@ -22,79 +35,25 @@ enum class Category {
 struct Transaction {
     long double price;
     std::string name;
-    Category cat;
+    Category category;
+    Type type;
 };
 
-void addCategory(Transaction& trans) {
 
-    std::cout << "Dodaj kategorie: " << std::endl;
-    std::cout << "1. Jedzenie" << std::endl
-              << "2. Oplaty" << std::endl
-              << "3. Rozrywka" << std::endl
-              << "4. Inne" << std::endl;
-
-    int categoryChoice;
-
-    while(true){
-        std::cin >> categoryChoice;
-        if(std::cin.fail() || categoryChoice < 1 || categoryChoice > 4) {
-            std::cin.clear();
-
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << '\n' << "Podaj poprawny numer: ";
-            } 
-            else {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                break;
-            }
-    }
-
-
-    switch(categoryChoice) {
-        case 1: {
-            trans.cat = Category::food;
-            break;
-        }
-        case 2: {
-            trans.cat = Category::fees;
-            break;
-        }
-        case 3: {
-            trans.cat = Category::entertainment;
-            break;
-        }
-        case 4: {
-            trans.cat = Category::other;
-            break;
-        }
-    }
-}
+void showMenu();
+void addCategory(Transaction& trans);
 
 void addTransaction(std::vector<Transaction>& transactions) {
 
     Transaction fresh; //nowa transkacja
 
-    while(true){
-        std::cin >> fresh.price;
-        if(std::cin.fail()) {
-            std::cin.clear();
-
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << '\n' << "Podaj poprawna liczbe: ";
-            }
-            else if(fresh.price <= 0){
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Kwota musi być wieksza od 0. Sprobuj ponownie: ";
-            } 
-            else {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                break;
-            }
-    }
+    fresh.price = readValidation<long double>(
+        "Kwota musi byc wieksza od 0. Sprobuj ponownie: ",
+        [](const long double& n) { return n > 0;}
+    );
 
     std::cout << "Dodaj opis transakcji: " << std::endl;
     std::getline(std::cin, fresh.name);
-
 
     addCategory(fresh);
 
@@ -132,18 +91,10 @@ int main() {
     long double wydatki = 0;
 
     do {
-        while(true){    
-            std::cin >> choose;
-            if(std::cin.fail() || choose < 0 || choose > 4) {
-                std::cin.clear();
-
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << '\n' << "Podaj poprawna liczbe: ";
-            } else {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                break;
-            }
-        }
+        choose = readValidation<int> (
+            "Podaj poprawna liczbe: ",
+            [](const int& n) { return n >= 0 && n <= 4; }
+        );
 
         switch(choose) {
             case 1: {
@@ -183,7 +134,7 @@ int main() {
                         << " - " 
                         << transactions[i].name 
                         << " - " 
-                        << categoryToString(transactions[i].cat)
+                        << categoryToString(transactions[i].category)
                         << std::endl;
                     }
                 }
@@ -200,4 +151,49 @@ int main() {
     } while(choose != 0);
 
     return 0;
+}
+
+
+
+void showMenu() {
+    std::cout << "Choose an option: " << std::endl
+              << "1. Dodaj przychod" << std::endl
+              << "2. Dodaj wydatek" << std::endl
+              << "3. Pokaz saldo" << std::endl
+              << "4. Pokaz transkacje" << std::endl
+              << "0. Wyjdz" << std::endl;
+}
+
+void addCategory(Transaction& trans) {
+
+    std::cout << "Dodaj kategorie: " << std::endl;
+    std::cout << "1. Jedzenie" << std::endl
+              << "2. Oplaty" << std::endl
+              << "3. Rozrywka" << std::endl
+              << "4. Inne" << std::endl;
+
+    int categoryChoice = readValidation<int> (
+        "Podaj poprawny numer: ",
+        [](const int& n) { return n >= 1 && n <= 4; }
+    );
+
+
+    switch(categoryChoice) {
+        case 1: {
+            trans.category = Category::food;
+            break;
+        }
+        case 2: {
+            trans.category = Category::fees;
+            break;
+        }
+        case 3: {
+            trans.category = Category::entertainment;
+            break;
+        }
+        case 4: {
+            trans.category = Category::other;
+            break;
+        }
+    }
 }

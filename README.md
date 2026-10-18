@@ -14,18 +14,21 @@ A simple personal finance manager written in C++.
 * Transaction structure using `struct`
 * Transaction storage using `vector`
 * Separate function for adding transactions
+* Transaction categories (`enum class Category`) selected through a separate function
+* Generic input validation function (`readValidation`) using a template and lambda expressions
 
 ## Technologies
 
 * C++
-* STL (`vector`, `string`)
+* STL (`vector`, `string`, `functional`)
+* Lambda expressions and function templates
 * Git / GitHub
 
 ## Version
 
-**v0.1.6**
+**v0.1.7**
 
-Added category as a function and replace to string to enum class.
+Replaced repeated input validation loops with a generic `readValidation<T>` function. The validation condition is passed as a lambda expression, so each place in the code (menu, amount, category) defines only its own rule.
 
 ## Status
 
@@ -33,8 +36,7 @@ Added category as a function and replace to string to enum class.
 
 ## Planned features
 
-* Transaction types (income / expense)
-* Categories
+* Using transaction types (income / expense) in the `Transaction` struct
 * Dates
 * Searching and filtering
 * Saving data to files
