@@ -1,22 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <limits>
 #include <functional>
+#include <algorithm>
+#include <sstream>
+#include <stdexcept>
+#include <iomanip>
 
 template<typename T>
 T readValidation(const std::string& errorMsg, std::function<bool(const T&)> isValid) {
-    T value;
+    std::string line;
     while(true) { 
-        std::cin >> value;
-        if(std::cin.fail() || !isValid(value)) {                                //walidacja danych
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << '\n' << errorMsg;
-        } else {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if(!std::getline(std::cin, line)) {                                //walidacja danych
+            throw std::runtime_error("Koniec wejscia");
+        }
+
+        std::replace(line.begin(), line.end(), ',', '.');
+
+        std::istringstream iss(line);
+        T value{};
+        char extra;
+
+        if(iss >> value && !(iss >> extra) && isValid(value)) {
             return value;
         }
+
+        std::cout << errorMsg;
+    
     }
 }
 
@@ -42,11 +52,31 @@ struct Transaction {
 
 void showMenu();
 void addCategory(Transaction& trans);
-
 void addTransaction(std::vector<Transaction>& transactions) {
 
-    Transaction fresh; //nowa transkacja
+    Transaction fresh{}; //nowa transkacja
 
+    std::cout << "Wybierz co chcesz zrobic: " << std::endl 
+              << "1. Przychod" << std::endl
+              << "2. Wydatek" << std::endl;
+
+    int choice = readValidation<int> ( 
+        "Wprowadz 1 lub 2 ",
+        [](const int& p) { return p == 1 || p == 2;}
+    );
+
+    switch(choice) {
+        case 1: {
+            fresh.type = Type::Income;
+            break;
+        }
+        case 2: {
+            fresh.type = Type::Expense;
+            break;
+        }
+    }
+
+    std::cout << "Podaj kwote: " << std::endl;
     fresh.price = readValidation<long double>(
         "Kwota musi byc wieksza od 0. Sprobuj ponownie: ",
         [](const long double& n) { return n > 0;}
@@ -60,107 +90,86 @@ void addTransaction(std::vector<Transaction>& transactions) {
     transactions.push_back(fresh);
 }
 
-std::string categoryToString(Category category) {
-    switch(category) {
-        case Category::food:
-            return "Jedzenie";
-        
-        case Category::fees:
-            return "Oplaty";
-        
-        case Category::entertainment:
-            return "Rozrywka";
-        
-        case Category::other:
-            return "Inne";
-    }
-
-    return "Nieznana";
-}
+std::string categoryToString(Category category);
+std::string typeToString(Type type);
 
 int main() {
+    std::cout << std::fixed << std::setprecision(2);
+    try {
+        std::cout << "===== FINANCE MANAGER =====" << std::endl;
 
-    std::cout << "===== FINANCE MANAGER =====" << std::endl;
-    showMenu();
+        std::vector<Transaction> transactions; //wektor przechowujuacy transkacje
 
-    std::vector<Transaction> transactions; //wektor przechowujuacy transkacje
+        int choose;
 
-    int choose;
-    long double saldo = 0;
-    long double przychody = 0;
-    long double wydatki = 0;
+        do {
+            showMenu();
+            choose = readValidation<int> (
+                "Podaj poprawna liczbe: ",
+                [](const int& n) { return n >= 0 && n <= 3; }
+            );
 
-    do {
-        choose = readValidation<int> (
-            "Podaj poprawna liczbe: ",
-            [](const int& n) { return n >= 0 && n <= 4; }
-        );
-
-        switch(choose) {
-            case 1: {
-                std::cout << "Podaj kwote przychodu: " << std::endl;
-
-                addTransaction(transactions);
-
-                saldo += transactions.back().price;
-                przychody += transactions.back().price;
-        
-                break;
-            }
-            case 2: {
-                std::cout << '\n' << "Podaj kwota wydatku: " << std::endl;
-                
-                addTransaction(transactions);
-
-                saldo -= transactions.back().price;
-                wydatki += transactions.back().price;
-
-                break;
-            }
-            case 3: {
-                std::cout << '\n' << "Twoje saldo wynosi: " << saldo << " zloty" << std::endl;
-                std::cout << '\n' << "Twoje przychody wynosza: " << przychody << " zloty" << std::endl;
-                std::cout << '\n' << "Twoje wydatki wynosza: " << wydatki << " zloty" << std::endl;
-                break;
-            }
-            case 4: {
-                std::cout << '\n' << "Twoje transakcje sa nastepujace: " << std::endl;
-
-                if(transactions.empty()) {
-                    std::cout << '\n' << "Nie masz zadnych transakcji" << std::endl;
-                } else {
-                    for(size_t i = 0; i < transactions.size(); ++i) {
-                        std::cout << transactions[i].price 
-                        << " - " 
-                        << transactions[i].name 
-                        << " - " 
-                        << categoryToString(transactions[i].category)
-                        << std::endl;
-                    }
+            switch(choose) {
+                case 1: {
+                    addTransaction(transactions);
+                    break;
                 }
-                break;
+                case 2: {
+                    long double przychody = 0;
+                    long double wydatki = 0;
+
+                    for(size_t i = 0; i < transactions.size(); ++i) {
+                        if(transactions[i].type == Type::Income) przychody += transactions[i].price;
+                        else wydatki += transactions[i].price;
+
+                    }
+
+                    std::cout << '\n' << "Twoje saldo wynosi: " << przychody - wydatki << " zloty" << std::endl;
+                    std::cout << '\n' << "Twoje przychody wynosza: " << przychody << " zloty" << std::endl;
+                    std::cout << '\n' << "Twoje wydatki wynosza: " << wydatki << " zloty" << std::endl;
+                    break;
+                }
+                case 3: {
+                    std::cout << '\n' << "Twoje transakcje sa nastepujace: " << std::endl;
+
+                    if(transactions.empty()) {
+                        std::cout << '\n' << "Nie masz zadnych transakcji" << std::endl;
+                    } else {
+                        for(size_t i = 0; i < transactions.size(); ++i) {
+                            std::cout << transactions[i].price 
+                            << " - " 
+                            << transactions[i].name 
+                            << " - " 
+                            << categoryToString(transactions[i].category)
+                            << " - "
+                            << typeToString(transactions[i].type)
+                            << std::endl;
+                        }
+                    }
+                    break;
+                }
+
+                default: {
+                    break;
+                }
             }
 
-            default: {
-                break;
-            }
-        }
+        } while(choose != 0);
 
-        showMenu();
-
-    } while(choose != 0);
-
+    } catch(const std::runtime_error& e) {
+        std::cout << '\n' << "Zakonczono: " << e.what() << std::endl;
+        return 1;
+    }
     return 0;
 }
 
 
 
 void showMenu() {
-    std::cout << "Choose an option: " << std::endl
-              << "1. Dodaj przychod" << std::endl
-              << "2. Dodaj wydatek" << std::endl
-              << "3. Pokaz saldo" << std::endl
-              << "4. Pokaz transkacje" << std::endl
+    std::cout << "Wybierz opcje: " << std::endl
+              << "1. Dodaj transakcje" << std::endl
+              << "2. Pokaz saldo" << std::endl
+              << "3. Pokaz transakcje" << std::endl
               << "0. Wyjdz" << std::endl;
 }
 
@@ -196,4 +205,34 @@ void addCategory(Transaction& trans) {
             break;
         }
     }
+}
+
+std::string categoryToString(Category category) {
+    switch(category) {
+        case Category::food:
+            return "Jedzenie";
+        
+        case Category::fees:
+            return "Oplaty";
+        
+        case Category::entertainment:
+            return "Rozrywka";
+        
+        case Category::other:
+            return "Inne";
+    }
+
+    return "Nieznana";
+}
+
+std::string typeToString(Type type) {
+    switch(type) {
+        case Type::Income:
+            return "Przychod";
+
+        case Type::Expense:
+            return "Wydatek";
+    }
+
+    return "Nieznany";
 }

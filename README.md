@@ -4,31 +4,30 @@ A simple personal finance manager written in C++.
 
 ## Current features
 
-* Add income
-* Add expenses
-* Display balance
-* Display total income and expenses
-* Display transaction history
-* Input validation
-* Menu input validation
+* Add transactions (income / expense)
+* Transaction types using `enum class Type`
+* Categories using `enum class Category` (food, fees, entertainment, other)
+* Display balance, total income and total expenses (calculated from the transaction list)
+* Display transaction history (amount, description, category, type)
+* Generic input validation (`readValidation` template with a validation lambda)
+* Input read line by line, so invalid input like `10abc` is rejected
+* Comma accepted as a decimal separator (`10,50`)
+* Amounts displayed with two decimal places
+* Safe handling of end of input (Ctrl+Z / Ctrl+D)
 * Transaction structure using `struct`
 * Transaction storage using `vector`
-* Separate function for adding transactions
-* Transaction categories (`enum class Category`) selected through a separate function
-* Generic input validation function (`readValidation`) using a template and lambda expressions
 
 ## Technologies
 
 * C++
-* STL (`vector`, `string`, `functional`)
-* Lambda expressions and function templates
+* STL (`vector`, `string`, `functional`, `sstream`, `iomanip`)
 * Git / GitHub
 
 ## Version
 
-**v0.1.7**
+**v0.2**
 
-Replaced repeated input validation loops with a generic `readValidation<T>` function. The validation condition is passed as a lambda expression, so each place in the code (menu, amount, category) defines only its own rule.
+Added transaction types, balance calculated from the transaction list, rewritten input validation (whole-line reading, comma support, end of input handling) and amount formatting.
 
 ## Status
 
@@ -36,7 +35,6 @@ Replaced repeated input validation loops with a generic `readValidation<T>` func
 
 ## Planned features
 
-* Using transaction types (income / expense) in the `Transaction` struct
 * Dates
 * Searching and filtering
 * Saving data to files
