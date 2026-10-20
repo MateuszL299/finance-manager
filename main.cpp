@@ -36,10 +36,9 @@ enum class Type {
 };
 
 enum class Category {
-    food,
-    fees,
-    entertainment,
-    other
+    food, fees, entertainment, otherExpense,
+
+    salary, gift, sale, otherIncome
 };
 
 struct Transaction {
@@ -61,7 +60,7 @@ void addTransaction(std::vector<Transaction>& transactions) {
               << "2. Wydatek" << std::endl;
 
     int choice = readValidation<int> ( 
-        "Wprowadz 1 lub 2 ",
+        "Wprowadz 1 lub 2: ",
         [](const int& p) { return p == 1 || p == 2;}
     );
 
@@ -175,34 +174,68 @@ void showMenu() {
 
 void addCategory(Transaction& trans) {
 
-    std::cout << "Dodaj kategorie: " << std::endl;
-    std::cout << "1. Jedzenie" << std::endl
-              << "2. Oplaty" << std::endl
-              << "3. Rozrywka" << std::endl
-              << "4. Inne" << std::endl;
+    if(trans.type == Type::Expense) {
+        std::cout << "Dodaj kategorie: " << std::endl;
+        std::cout << "1. Jedzenie" << std::endl
+                << "2. Oplaty" << std::endl
+                << "3. Rozrywka" << std::endl
+                << "4. Inne" << std::endl;
 
-    int categoryChoice = readValidation<int> (
-        "Podaj poprawny numer: ",
-        [](const int& n) { return n >= 1 && n <= 4; }
-    );
+        int categoryChoice = readValidation<int> (
+            "Podaj poprawny numer: ",
+            [](const int& n) { return n >= 1 && n <= 4; }
+        );
 
 
-    switch(categoryChoice) {
-        case 1: {
-            trans.category = Category::food;
-            break;
+        switch(categoryChoice) {
+            case 1: {
+                trans.category = Category::food;
+                break;
+            }
+            case 2: {
+                trans.category = Category::fees;
+                break;
+            }
+            case 3: {
+                trans.category = Category::entertainment;
+                break;
+            }
+            case 4: {
+                trans.category = Category::otherExpense;
+                break;
+            }
         }
-        case 2: {
-            trans.category = Category::fees;
-            break;
-        }
-        case 3: {
-            trans.category = Category::entertainment;
-            break;
-        }
-        case 4: {
-            trans.category = Category::other;
-            break;
+    }
+    else if(trans.type == Type::Income) {
+        std::cout << "Dodaj kategorie: " << std::endl;
+        std::cout << "1. Wyplata" << std::endl
+                << "2. Prezent" << std::endl
+                << "3. Sprzedaz" << std::endl
+                << "4. Inne" << std::endl;
+
+        int categoryChoice = readValidation<int> (
+            "Podaj poprawny numer: ",
+            [](const int& n) { return n >= 1 && n <= 4; }
+        );
+
+
+        switch(categoryChoice) {
+            case 1: {
+                trans.category = Category::salary;
+                break;
+            }
+            case 2: {
+                trans.category = Category::gift;
+                break;
+            }
+            case 3: {
+                trans.category = Category::sale;
+                break;
+            }
+            case 4: {
+                trans.category = Category::otherIncome;
+                break;
+            }
         }
     }
 }
@@ -218,7 +251,19 @@ std::string categoryToString(Category category) {
         case Category::entertainment:
             return "Rozrywka";
         
-        case Category::other:
+        case Category::otherExpense:
+            return "Inne";
+
+        case Category::salary:
+            return "Wyplata";
+        
+        case Category::gift:
+            return "Prezent";
+        
+        case Category::sale:
+            return "Sprzedaz";
+        
+        case Category::otherIncome:
             return "Inne";
     }
 

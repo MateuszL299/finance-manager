@@ -1,33 +1,33 @@
 # Finance Manager
 
-A simple personal finance manager written in C++.
+A simple personal finance manager written in C++ (console application).
 
 ## Current features
 
-* Add transactions (income / expense)
-* Transaction types using `enum class Type`
-* Categories using `enum class Category` (food, fees, entertainment, other)
-* Display balance, total income and total expenses (calculated from the transaction list)
+* Add transactions (income or expense) with amount, description and category
+* Separate category sets for income and expenses
+  * Expenses: food, fees, entertainment, other
+  * Income: salary, gift, sale, other
+* Display balance, total income and total expenses
 * Display transaction history (amount, description, category, type)
-* Generic input validation (`readValidation` template with a validation lambda)
-* Input read line by line, so invalid input like `10abc` is rejected
-* Comma accepted as a decimal separator (`10,50`)
-* Amounts displayed with two decimal places
-* Safe handling of end of input (Ctrl+Z / Ctrl+D)
-* Transaction structure using `struct`
-* Transaction storage using `vector`
+* Input validation through a generic `readValidation<T>` template
+  * accepts both `,` and `.` as the decimal separator
+  * rejects trailing characters and out-of-range values
+  * handles end of input with an exception
+* Balance computed directly from the transaction list (single source of truth)
+* Amounts displayed with fixed 2-decimal precision
 
 ## Technologies
 
 * C++
-* STL (`vector`, `string`, `functional`, `sstream`, `iomanip`)
+* STL (`vector`, `string`, `function`, `sstream`, `iomanip`)
 * Git / GitHub
 
 ## Version
 
-**v0.2**
+**v0.2.1**
 
-Added transaction types, balance calculated from the transaction list, rewritten input validation (whole-line reading, comma support, end of input handling) and amount formatting.
+Split categories into separate sets for income and expenses. `addCategory` now picks the menu based on the transaction type.
 
 ## Status
 
@@ -38,6 +38,7 @@ Added transaction types, balance calculated from the transaction list, rewritten
 * Dates
 * Searching and filtering
 * Saving data to files
-* Statistics
+* Statistics (e.g. spending per category)
+* Deleting transactions
 * Further code refactoring
 * Database support
